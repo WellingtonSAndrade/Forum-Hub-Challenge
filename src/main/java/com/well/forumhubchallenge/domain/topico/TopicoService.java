@@ -5,8 +5,13 @@ import com.well.forumhubchallenge.domain.exception.RecursoNaoEncontradoException
 import com.well.forumhubchallenge.domain.exception.ValidacaoException;
 import com.well.forumhubchallenge.domain.topico.dto.DadosTopico;
 import com.well.forumhubchallenge.domain.usuario.UsuarioRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 public class TopicoService {
@@ -33,5 +38,17 @@ public class TopicoService {
             throw new ValidacaoException("Já existe um tópico com esse titulo e mensagens");
         }
         return topicoRepository.save(topico);
+    }
+
+    public Page<DadosTopico> listarTopicos(Long curso, Integer ano, Pageable pageable) {
+        LocalDateTime inicio = null;
+        LocalDateTime fim = null;
+
+        if (ano != null) {
+            inicio = LocalDate.of(ano, 1, 1).atStartOfDay();
+            fim = LocalDate.of(ano + 1, 1, 1).atStartOfDay();
+        }
+
+        return topicoRepository.buscar(curso, inicio, fim, pageable).map(DadosTopico::new);
     }
 }
