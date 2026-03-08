@@ -68,4 +68,12 @@ public class TopicoService {
 
         return topico;
     }
+
+    @Transactional
+    public void excluir(Long id) {
+        if (!topicoRepository.existsById(id)) {
+            throw new RecursoNaoEncontradoException("Id do tópico informado nao existe");
+        }
+        topicoRepository.deleteById(id);
+    }
 }

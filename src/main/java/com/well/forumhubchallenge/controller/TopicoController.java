@@ -18,7 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("/topicos")
 public class TopicoController {
 
-    private TopicoService servico;
+    private final TopicoService servico;
 
     public TopicoController(TopicoService servico) {
         this.servico = servico;
@@ -53,5 +53,11 @@ public class TopicoController {
     public ResponseEntity<DadosDetalhamentoTopico> atualizarTopico(@PathVariable Long id, @RequestBody DadosAtualizacaoTopico dados){
         var topico = servico.atualizar(id, dados);
         return ResponseEntity.ok(new DadosDetalhamentoTopico(topico));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluirTopico(@PathVariable Long id){
+        servico.excluir(id);
+        return ResponseEntity.noContent().build();
     }
 }
