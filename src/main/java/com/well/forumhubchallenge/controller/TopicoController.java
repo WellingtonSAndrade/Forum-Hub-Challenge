@@ -1,7 +1,9 @@
 package com.well.forumhubchallenge.controller;
 
+import com.well.forumhubchallenge.domain.topico.DadosAtualizacaoTopico;
 import com.well.forumhubchallenge.domain.topico.TopicoService;
 import com.well.forumhubchallenge.domain.topico.dto.DadosDetalhamentoTopico;
+import com.well.forumhubchallenge.domain.topico.dto.DadosListarTopico;
 import com.well.forumhubchallenge.domain.topico.dto.DadosTopico;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -23,20 +25,20 @@ public class TopicoController {
     }
 
     @PostMapping
-    public ResponseEntity<DadosTopico> criarTopico(@RequestBody @Valid DadosTopico dados, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<DadosDetalhamentoTopico> criarTopico(@RequestBody @Valid DadosTopico dados, UriComponentsBuilder uriBuilder) {
         var topico = servico.criarTopico(dados);
 
         var uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(new DadosTopico(topico));
+        return ResponseEntity.created(uri).body(new DadosDetalhamentoTopico(topico));
     }
 
     @GetMapping
-    public ResponseEntity<Page<DadosTopico>> listarTopicos(
+    public ResponseEntity<Page<DadosListarTopico>> listarTopicos(
             @RequestParam(required = false) Long curso,
             @RequestParam(required = false) Integer ano,
             @PageableDefault(sort = "dataCriacao", direction = Sort.Direction.ASC) Pageable pageable) {
-        var page = servico.listarTopicos(curso, ano, pageable).map(DadosTopico::new);
+        var page = servico.listarTopicos(curso, ano, pageable).map(DadosListarTopico::new);
         return ResponseEntity.ok(page);
     }
 
@@ -44,6 +46,12 @@ public class TopicoController {
     public ResponseEntity<DadosDetalhamentoTopico> detalharTopico(@PathVariable Long id){
         var topico = servico.detalhar(id);
 
+        return ResponseEntity.ok(new DadosDetalhamentoTopico(topico));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<DadosDetalhamentoTopico> atualizarTopico(@PathVariable Long id, @RequestBody DadosAtualizacaoTopico dados){
+        var topico = servico.atualizar(id, dados);
         return ResponseEntity.ok(new DadosDetalhamentoTopico(topico));
     }
 }
