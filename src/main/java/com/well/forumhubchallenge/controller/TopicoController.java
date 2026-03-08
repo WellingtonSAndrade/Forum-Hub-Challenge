@@ -1,6 +1,7 @@
 package com.well.forumhubchallenge.controller;
 
 import com.well.forumhubchallenge.domain.topico.TopicoService;
+import com.well.forumhubchallenge.domain.topico.dto.DadosDetalhamentoTopico;
 import com.well.forumhubchallenge.domain.topico.dto.DadosTopico;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -35,7 +36,14 @@ public class TopicoController {
             @RequestParam(required = false) Long curso,
             @RequestParam(required = false) Integer ano,
             @PageableDefault(sort = "dataCriacao", direction = Sort.Direction.ASC) Pageable pageable) {
-        var page = servico.listarTopicos(curso, ano, pageable);
+        var page = servico.listarTopicos(curso, ano, pageable).map(DadosTopico::new);
         return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DadosDetalhamentoTopico> detalharTopico(@PathVariable Long id){
+        var topico = servico.detalhar(id);
+
+        return ResponseEntity.ok(new DadosDetalhamentoTopico(topico));
     }
 }

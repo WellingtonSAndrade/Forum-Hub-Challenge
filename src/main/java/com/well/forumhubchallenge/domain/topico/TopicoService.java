@@ -40,7 +40,7 @@ public class TopicoService {
         return topicoRepository.save(topico);
     }
 
-    public Page<DadosTopico> listarTopicos(Long curso, Integer ano, Pageable pageable) {
+    public Page<Topico> listarTopicos(Long curso, Integer ano, Pageable pageable) {
         LocalDateTime inicio = null;
         LocalDateTime fim = null;
 
@@ -49,6 +49,10 @@ public class TopicoService {
             fim = LocalDate.of(ano + 1, 1, 1).atStartOfDay();
         }
 
-        return topicoRepository.buscar(curso, inicio, fim, pageable).map(DadosTopico::new);
+        return topicoRepository.buscar(curso, inicio, fim, pageable);
+    }
+
+    public Topico detalhar(Long id) {
+        return topicoRepository.getReferenceById(id);
     }
 }
