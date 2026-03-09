@@ -1,0 +1,4 @@
+package com.well.forumhubchallenge.domain.usuario.dto;
+
+public record DadosAutenticacao(String login, String senha) {
+}
